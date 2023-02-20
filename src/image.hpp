@@ -20,7 +20,7 @@ const std::string OUTPUT_FILE_FLAG = "--out";
 std::string usage() {
     std::stringstream buffer;
     buffer << "Usage: ./image_gen\n";
-    buffer << "Optional Flags:\n\t";
+    buffer << "Optional Flags:\n\t--help\tprint usage info\n\t";
     buffer << WIDTH_FLAG << "\tset output canvas width (default == " << DEFAULT_CANVAS_WIDTH << ")\n\t"
         << HEIGHT_FLAG << "\tset output canvas height (default == " << DEFAULT_CANVAS_HEIGHT << ")\n\t"
         << RESOLUTION_FLAG << "\tset output image resolution (default == " << DEFAULT_RESOLUTION << ")\n\t"
@@ -71,6 +71,7 @@ bool operator==(const RandomImageConfiguration& lhs, const RandomImageConfigurat
 
 std::ostream& operator<<(std::ostream& os, const RandomImageConfiguration& rhs) {
     os << "Dimensions: " << rhs.canvas_width << "x" << rhs.canvas_height << "\n";
+    os << "Resolution: " << rhs.resolution.width() << "x" << rhs.resolution.height() << "\n";
     os << "NumShapes: " << rhs.num_shapes << "\n";
     os << "Output Filename: " << rhs.output_file;
     return os;
@@ -79,6 +80,10 @@ std::ostream& operator<<(std::ostream& os, const RandomImageConfiguration& rhs) 
 RandomImageConfiguration::RandomImageConfiguration(int argc, char* argv[]) {
     for (auto i = 1; i < argc; i++) {
         const auto flag = std::string(argv[i]);
+        if (flag == "--help" || flag == "-h") {
+            std::cout << usage() << std::endl;
+            exit(0);
+        }
         if (i + 1 > argc) {
             throw std::string("RandomImageConfiguration::RandomImageConfiguration error: no argument after "+flag+".\n"+usage());
         }
