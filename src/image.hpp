@@ -3,6 +3,8 @@
 #include <Magick++.h>
 #include <sstream>
 
+#include "shape.hpp"
+
 const std::string usage = "usage: ./image_gen --width 1920 --height 1080 --num_shapes 10 --out filename.jpg";
 
 template <typename T>
@@ -31,13 +33,23 @@ const std::string DEFAULT_OUTPUT_FILE{"test.png"};
 struct RandomImageConfiguration {
     RandomImageConfiguration() = default;
     RandomImageConfiguration(int argc, char* argv[]);
-    RandomImageConfiguration(size_t canvas_width, size_t canvas_height, size_t num_shapes);
+    RandomImageConfiguration(size_t canvas_width, size_t canvas_height, size_t num_shapes, std::string output_filename);
     size_t canvas_width{DEFAULT_CANVAS_WIDTH};
     size_t canvas_height{DEFAULT_CANVAS_HEIGHT};
     size_t num_shapes{DEFAULT_NUM_SHAPES};
     std::string output_file{DEFAULT_OUTPUT_FILE};
     friend std::ostream& operator<<(std::ostream& os, const RandomImageConfiguration& configuration);
+    friend bool operator==(const RandomImageConfiguration& lhs, const RandomImageConfiguration& rhs);
 };
+
+bool operator==(const RandomImageConfiguration& lhs, const RandomImageConfiguration& rhs) {
+    return (
+        (lhs.canvas_width == rhs.canvas_width) &&
+        (lhs.canvas_height == rhs.canvas_height) &&
+        (lhs.num_shapes == rhs.num_shapes) &&
+        (lhs.output_file == rhs.output_file)
+    );
+}
 
 std::ostream& operator<<(std::ostream& os, const RandomImageConfiguration& rhs) {
     os << "Dimensions: " << rhs.canvas_width << "x" << rhs.canvas_height << "\n";
@@ -75,13 +87,14 @@ RandomImageConfiguration::RandomImageConfiguration(int argc, char* argv[]) {
     }
 }
 
-RandomImageConfiguration::RandomImageConfiguration(size_t canvas_width, size_t canvas_height, size_t num_shapes) 
-    : canvas_width{canvas_width}, canvas_height{canvas_height}, num_shapes{num_shapes} {}
+RandomImageConfiguration::RandomImageConfiguration(size_t canvas_width, size_t canvas_height, size_t num_shapes, std::string output_filename) 
+    : canvas_width{canvas_width}, canvas_height{canvas_height}, num_shapes{num_shapes}, output_file{output_filename} {}
 
 struct RandomImage : public Magick::Image {
     RandomImage() = default;
     RandomImage(const RandomImageConfiguration&);
     void write();
+    const RandomImageConfiguration& config() const {return configuration;}
 private:
     Magick::Image image;
     RandomImageConfiguration configuration{};
