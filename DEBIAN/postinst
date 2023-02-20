@@ -1,3 +1,3 @@
-sudo mv /opt/image-gen /usr/local/lib
-mv /opt/image-gen/image-gen-extras /usr/share/doc/
-mv /opt/image-gen/image-gen-licenses /usr/share/licenses/
+sudo mv /opt/image-gen/image-gen /usr/local/bin
+sudo mv /opt/image-gen/image-gen-extras /usr/share/doc/
+sudo mv /opt/image-gen/image-gen-licenses /usr/share/licenses/
