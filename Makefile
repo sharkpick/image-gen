@@ -6,7 +6,7 @@ target: all
 all: image_gen
 
 image_gen:
-	$(CXX) $(COMPILER_FLAGS) -o image_gen main.cpp $(LINKER_FLAGS)
+	$(CXX) $(COMPILER_FLAGS) -o image_gen src/main.cpp $(LINKER_FLAGS)
 
 clean:
 	rm -f image_gen

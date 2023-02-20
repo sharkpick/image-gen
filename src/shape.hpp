@@ -1,12 +1,11 @@
+#pragma once
+
 #include <iostream>
-#include <random>
 
 #include <Magick++.h>
+#include <random>
 
-using namespace Magick;
-
-const uint CANVAS_WIDTH = 1920;
-const uint CANVAS_HEIGHT = 1080;
+#include "utilities.hpp"
 
 struct Coordinates {
     double x{};
@@ -19,7 +18,7 @@ std::ostream& operator<<(std::ostream& os, Coordinates& rhs) {
     return os;
 }
 
-DrawableRectangle RandomRectangle() {
+Magick::DrawableRectangle RandomRectangle(const uint CANVAS_WIDTH, const uint CANVAS_HEIGHT) {
     std::random_device rd;
     std::mt19937 gen(rd());
     Coordinates start_coordinates{};
@@ -34,10 +33,10 @@ DrawableRectangle RandomRectangle() {
     std::uniform_int_distribution<> end_y_distribution(start_coordinates.y, CANVAS_HEIGHT);
     end_coordinates.y = end_y_distribution(gen);
     //std::cout << "end: " << end_coordinates << std::endl;
-    return DrawableRectangle(start_coordinates.x, start_coordinates.y, end_coordinates.x, end_coordinates.y);
+    return Magick::DrawableRectangle(start_coordinates.x, start_coordinates.y, end_coordinates.x, end_coordinates.y);
 }
 
-DrawableCircle RandomCircle() {
+Magick::DrawableCircle RandomCircle(const uint CANVAS_WIDTH, const uint CANVAS_HEIGHT) {
     std::random_device rd;
     std::mt19937 gen(rd());
     Coordinates start_coordinates{};
@@ -52,55 +51,26 @@ DrawableCircle RandomCircle() {
     std::uniform_int_distribution<> end_y_distribution(start_coordinates.y, CANVAS_HEIGHT);
     end_coordinates.y = end_y_distribution(gen);
     //std::cout << "end: " << end_coordinates << std::endl;
-    return DrawableCircle(start_coordinates.x, start_coordinates.y, end_coordinates.x, end_coordinates.y);
-}
-
-ColorRGB RandomColor() {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> distribution(0.0, 1.0);
-    const auto red = distribution(gen);
-    const auto green = distribution(gen);
-    const auto blue = distribution(gen);
-    return ColorRGB(red, green, blue);
-}
-
-uint RandomStrokeWidth() {
-    const auto min = 1;
-    const auto max = 25;
-    return (rand() % (max-min)+1) + min;
+    return Magick::DrawableCircle(start_coordinates.x, start_coordinates.y, end_coordinates.x, end_coordinates.y);
 }
 
 std::random_device shape_rd;
 std::mt19937 shape_gen(shape_rd());
 std::uniform_int_distribution<> shape_distribution(1, 2);
 
-std::list<Magick::Drawable> RandomDrawAction() {
+std::list<Magick::Drawable> RandomDrawAction(const uint CANVAS_WIDTH, const uint CANVAS_HEIGHT) {
     std::list<Magick::Drawable> action{};
-    action.push_back(DrawableStrokeColor(RandomColor()));
-    action.push_back(DrawableStrokeWidth(RandomStrokeWidth()));
-    action.push_back(DrawableFillColor(RandomColor()));
+    action.push_back(Magick::DrawableStrokeColor(RandomColor()));
+    action.push_back(Magick::DrawableStrokeWidth(RandomStrokeWidth()));
+    action.push_back(Magick::DrawableFillColor(RandomColor()));
     const auto shape = shape_distribution(shape_gen);
     switch (shape) {
         case 1:
-            action.push_back(RandomRectangle());
+            action.push_back(RandomRectangle(CANVAS_WIDTH, CANVAS_HEIGHT));
             break;
         case 2:
-            action.push_back(RandomCircle());
+            action.push_back(RandomCircle(CANVAS_WIDTH, CANVAS_HEIGHT));
             break;
     };
     return action;
-}
-
-int main() {
-    srand(time(nullptr));
-    Magick::InitializeMagick(nullptr);
-    Geometry geometry{};
-    geometry.width(CANVAS_WIDTH);
-    geometry.height(CANVAS_HEIGHT);
-    Image image{geometry, RandomColor()};
-    for (auto i = 0; i < 4; i++) {
-        image.draw(RandomDrawAction());
-    }
-    image.write("test.png");
 }
