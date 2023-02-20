@@ -1,0 +1,5 @@
+Package: image-gen
+Maintainer: William Dillon <william@wmdillon.com>
+Version: 0.0.1
+Architecture: amd64
+Description: image-gen generates random images using math and ImageMagick and Magick++
