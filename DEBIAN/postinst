@@ -1,3 +1,4 @@
 sudo mv /opt/image-gen/image-gen /usr/local/bin
 sudo mv /opt/image-gen/image-gen-extras /usr/share/doc/
 sudo mv /opt/image-gen/image-gen-licenses /usr/share/licenses/
+sudo mkdir -p /etc/image-gen/ && sudo mv /opt/image-gen/settings /etc/image-gen/

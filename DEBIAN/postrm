@@ -1,4 +1,4 @@
 sudo rm /usr/local/bin/image-gen
-sudo rm -rf /opt/image-gen
-sudo rm -rf /usr/share/doc/image-gen-extras
-sudo rm -rf /usr/share/licenses/image-gen-licenses
+sudo rm -rf /opt/image-gen/
+sudo rm -rf /usr/share/doc/image-gen-extras/
+sudo rm -rf /usr/share/licenses/image-gen-licenses/

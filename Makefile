@@ -1,5 +1,5 @@
 CXX:=g++
-COMPILER_FLAGS:=-std=c++2a -Wall -Wextra -pedantic
+COMPILER_FLAGS:=-std=c++2a -O3 -Wall -Wextra -pedantic
 LINKER_FLAGS:=`Magick++-config --cppflags --cxxflags --ldflags --libs`
 VERSION:=0.0.1
 ARCHITECTURE:=amd64
@@ -24,6 +24,7 @@ deb:
 	$(CXX) $(COMPILER_FLAGS) -o $(EXECUTABLE_NAME)/$(EXECUTABLE_NAME) src/main.cpp $(LINKER_FLAGS)
 	cp LICENSE $(EXECUTABLE_NAME)/$(EXECUTABLE_NAME)-licenses
 	cp README.md $(EXECUTABLE_NAME)/$(EXECUTABLE_NAME)-extras
+	cp settings $(EXECUTABLE_NAME)
 	cp -r DEBIAN $(DEB_NAME)
 	mv $(EXECUTABLE_NAME) $(DEB_NAME)/opt
 	dpkg-deb --build --root-owner-group $(DEB_NAME)	

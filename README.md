@@ -28,3 +28,6 @@ image-gen takes some command line flags:
     --resolution    set output image resolution (default == 72x72)
     --num_shapes    set number of shapes in output image (default == 1)
     --out   set output file name (default == test.png)
+
+## Settings
+default settings can be modified using the settings file at /etc/image-gen/settings
