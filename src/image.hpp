@@ -7,7 +7,7 @@
 #include "settings.hpp"
 
 const std::string SETTINGS_FILE = "/etc/image-gen/settings";
-auto ImageGenSettings = Settings(SETTINGS_FILE);
+auto ImageGenSettings = Settings(SETTINGS_FILE, {}, false);
 
 const size_t DEFAULT_CANVAS_WIDTH{1920};
 const size_t DEFAULT_CANVAS_HEIGHT{1080};

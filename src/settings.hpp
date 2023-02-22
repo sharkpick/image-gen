@@ -25,13 +25,15 @@ class Settings
 {
 public:
     Settings() = delete;
-    Settings(std::string, std::vector<std::string>);
+    Settings(std::string, std::vector<std::string>, bool);
     std::string filename() const;
     void filename(std::string);
     std::string param(std::string);
     void param(std::string, std::string);
     void update();
     void operator=(const Settings &rhs);
+    Settings &logging(bool);
+    bool logging() const;
 
 private:
     void locked_update();
@@ -39,8 +41,21 @@ private:
     mutable std::mutex _mutex{};
     std::string _filename{};
     std::map<std::string, std::string> _contents{};
+    bool _logging{true};
 };
 
+Settings &Settings::logging(bool doLogging)
+{
+    const std::lock_guard<std::mutex> lock(_mutex);
+    _logging = doLogging;
+    return *this;
+}
+
+bool Settings::logging() const
+{
+    const std::lock_guard<std::mutex> lock(_mutex);
+    return _logging;
+}
 void Settings::operator=(const Settings &rhs)
 {
     const std::lock_guard<std::mutex> lock(_mutex);
@@ -94,11 +109,13 @@ void Settings::locked_update()
             continue;
         else if (found == _contents.end())
         {
-            std::cout << "Settings::locked_update adding key " << key << " with value " << value << "\n";
+            if (_logging)
+                std::cout << "Settings::locked_update adding key " << key << " with value " << value << "\n";
         }
         else
         {
-            std::cout << "Settings::locked_update updating value for key " << key << " from " << found->second << " to " << value << "\n";
+            if (_logging)
+                std::cout << "Settings::locked_update updating value for key " << key << " from " << found->second << " to " << value << "\n";
         }
         _contents[key] = value;
     }
@@ -131,16 +148,19 @@ void Settings::param(std::string key, std::string value)
     const auto found = _contents.find(key);
     if (found == _contents.end())
     {
-        std::cout << "Settings::param() adding key " << key << " with value " << value << "\n";
+        if (_logging)
+            std::cout << "Settings::param() adding key " << key << " with value " << value << "\n";
     }
     else
     {
-        std::cout << "Settings::param() updating key " << key << " value from " << found->second << " to " << value << "\n";
+        if (_logging)
+            std::cout << "Settings::param() updating key " << key << " value from " << found->second << " to " << value << "\n";
     }
     _contents[key] = value;
 }
 
-Settings::Settings(std::string filename, std::vector<std::string> optional_parameters = {}) : _filename{filename}
+Settings::Settings(std::string filename, std::vector<std::string> optional_parameters = {}, bool doLogging = true)
+    : _filename{filename}, _logging{doLogging}
 {
     for (const auto &param : optional_parameters)
     {
@@ -152,7 +172,8 @@ Settings::Settings(std::string filename, std::vector<std::string> optional_param
         }
         const auto key = param.substr(0, splitPosition);
         const auto value = param.substr(splitPosition + 1, param.length());
-        std::cout << "Settings::Settings adding key " << key << " with value " << value << "\n";
+        if (_logging)
+            std::cout << "Settings::Settings adding key " << key << " with value " << value << "\n";
         _contents[key] = value;
     }
     locked_update();
